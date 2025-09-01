@@ -3,23 +3,53 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class PostActions extends StatefulWidget {
-  const PostActions({super.key});
+  final String username;
+  final bool isLiked;
+  final bool isSaved;
+  final int likesNumber;
+  final int commentNumber;
+  final int repostNumber;
+  final int shareNumber;
+
+  const PostActions({
+    super.key,
+    required this.username,
+    required this.isLiked,
+    required this.isSaved,
+    required this.commentNumber,
+    required this.likesNumber,
+    required this.repostNumber,
+    required this.shareNumber,
+  });
 
   @override
   State<PostActions> createState() => _PostActionsState();
 }
 
 class _PostActionsState extends State<PostActions> {
-  bool isLiked = false;
-  bool isSaved = false;
-  int likesNumber = 1405;
-  int commentNumber = 15;
-  int repostNumber = 14;
-  int shareNumber = 514;
+  late bool isLiked = false;
+  late bool isSaved = false;
+  late int likesNumber = 1405;
+  late int commentNumber = 15;
+  late int repostNumber = 14;
+  late int shareNumber = 514;
 
-  
-    // comments
-  List<String> comments = ["Nice post!", "Love this", "Interesting"];
+  @override
+  void initState() {
+    super.initState();
+    isLiked = widget.isLiked;
+    isSaved = widget.isSaved;
+    commentNumber=widget.commentNumber;
+    repostNumber=widget.repostNumber;
+    shareNumber=widget.shareNumber;
+    likesNumber=widget.likesNumber;
+  }
+
+  // comments
+  final List<Map<String, dynamic>> comments = [
+    {"username": "xk345", "comment": "Nice post!"},
+    {"username": "xiaoqi", "comment": "Love this"},
+  ];
 
   void _openComments(BuildContext context) {
     TextEditingController _controller = TextEditingController();
@@ -40,78 +70,89 @@ class _PostActionsState extends State<PostActions> {
           builder: (context, scrollController) {
             return StatefulBuilder(
               builder: (context, setModalState) {
-                return Container(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      // drag handle
-                      Container(
-                        width: 50,
-                        height: 5,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[700],
-                          borderRadius: BorderRadius.circular(10),
+                return Padding(
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom,
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        // drag handle
+                        Container(
+                          width: 50,
+                          height: 5,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[700],
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 12),
+                        const SizedBox(height: 12),
 
-                      // comments list
-                      Expanded(
-                        child: ListView.builder(
-                          controller: scrollController,
-                          itemCount: comments.length,
-                          itemBuilder: (context, index) {
-                            return ListTile(
-                              leading: const CircleAvatar(
-                                backgroundColor: Colors.grey,
-                                child: Icon(Icons.person, color: Colors.white),
-                              ),
-                              title: Text(
-                                "User ${index + 1}",
+                        // comments list
+                        Expanded(
+                          child: ListView.builder(
+                            controller: scrollController,
+                            itemCount: comments.length,
+                            itemBuilder: (context, index) {
+                              return ListTile(
+                                leading: const CircleAvatar(
+                                  backgroundColor: Colors.grey,
+                                  child: Icon(
+                                    Icons.person,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                title: Text(
+                                  comments[index]["username"],
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                                subtitle: Text(
+                                  comments[index]["comment"],
+                                  style: const TextStyle(color: Colors.white70),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+
+                        Divider(color: Colors.grey[800]),
+
+                        // input + send
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: _controller,
                                 style: const TextStyle(color: Colors.white),
-                              ),
-                              subtitle: Text(
-                                comments[index],
-                                style: const TextStyle(color: Colors.white70),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-
-                      Divider(color: Colors.grey[800]),
-
-                      // input + send
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: _controller,
-                              style: const TextStyle(color: Colors.white),
-                              decoration: const InputDecoration(
-                                hintText: "Write a comment...",
-                                hintStyle: TextStyle(color: Colors.white54),
-                                border: InputBorder.none,
+                                decoration: const InputDecoration(
+                                  hintText: "Write a comment...",
+                                  hintStyle: TextStyle(color: Colors.white54),
+                                  border: InputBorder.none,
+                                ),
                               ),
                             ),
-                          ),
-                          IconButton(
-                            onPressed: () {
-                              if (_controller.text.trim().isNotEmpty) {
-                                setModalState(() {
-                                  comments.add(_controller.text.trim());
-                                });
-                                setState(
-                                  () {},
-                                ); // update comment count in main UI
-                                _controller.clear();
-                              }
-                            },
-                            icon: const Icon(Icons.send, color: Colors.blue),
-                          ),
-                        ],
-                      ),
-                    ],
+                            IconButton(
+                              onPressed: () {
+                                if (_controller.text.trim().isNotEmpty) {
+                                  setModalState(() {
+                                    comments.add({
+                                      "username": widget.username,
+                                      "comment": _controller.text.trim(),
+                                    });
+                                  });
+                                  setState(() {
+                                    commentNumber++;
+                                  });
+                                  _controller.clear();
+                                }
+                              },
+                              icon: const Icon(Icons.send, color: Colors.blue),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },
@@ -121,7 +162,6 @@ class _PostActionsState extends State<PostActions> {
       },
     );
   }
-
 
   @override
   Widget build(BuildContext context) {

@@ -5,8 +5,9 @@ import 'package:flutter/material.dart';
 class PostHeader extends StatefulWidget {
   final String username;
   final String subname;
+  final bool isFollow;
 
-  const PostHeader({Key? key, required this.username, required this.subname})
+  const PostHeader({Key? key, required this.username, required this.subname , required this.isFollow})
     : super(key: key);
 
   @override
@@ -14,8 +15,13 @@ class PostHeader extends StatefulWidget {
 }
 
 class _PostHeaderState extends State<PostHeader> {
-  bool isFollow = false;
-  String followText = "Follow";
+  late bool isFollow;
+
+  @override
+  void initState() {
+    super.initState();
+    isFollow = widget.isFollow;
+  }
 
   @override
   Widget build(BuildContext context) {

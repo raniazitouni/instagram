@@ -6,21 +6,40 @@ import 'postActions.dart';
 import 'postImage.dart';
 import 'postFooter.dart';
 
-class PostWidget extends StatefulWidget {
+class Post {
   final String username;
   final String subname;
   final List<String> images;
   final String? caption;
   final String date;
+  final bool isFollow;
+  final bool isLiked;
+  final bool isSaved;
+  final int likesNumber;
+  final int commentNumber;
+  final int repostNumber;
+  final int shareNumber;
 
-  const PostWidget({
-    Key? key,
+  const Post({
     required this.username,
     required this.subname,
     required this.images,
     this.caption,
     required this.date,
-  }) : super(key: key);
+    required this.isFollow,
+    required this.isLiked,
+    required this.isSaved,
+    required this.commentNumber,
+    required this.likesNumber,
+    required this.repostNumber,
+    required this.shareNumber,
+  });
+}
+
+class PostWidget extends StatefulWidget {
+  final Post post;
+
+  const PostWidget({Key? key, required this.post}) : super(key: key);
 
   @override
   State<PostWidget> createState() => _PostWidgetState();
@@ -31,13 +50,25 @@ class _PostWidgetState extends State<PostWidget> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        PostHeader(username: widget.username, subname: widget.subname),
-        PostImage(images: widget.images),
-        PostActions(),
+        PostHeader(
+          username: widget.post.username,
+          subname: widget.post.subname,
+          isFollow: widget.post.isFollow,
+        ),
+        PostImage(images: widget.post.images),
+        PostActions(
+          username: widget.post.username,
+          isLiked: widget.post.isLiked,
+          isSaved: widget.post.isSaved,
+          commentNumber: widget.post.commentNumber,
+          likesNumber: widget.post.likesNumber,
+          shareNumber: widget.post.shareNumber,
+          repostNumber: widget.post.repostNumber,
+        ),
         PostFooter(
-          username: widget.username,
-          caption: widget.caption,
-          date: widget.date,
+          username: widget.post.username,
+          caption: widget.post.caption,
+          date: widget.post.date,
         ),
       ],
     );

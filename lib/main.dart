@@ -57,18 +57,6 @@ class __MainScreenState extends State<_MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        leading: IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          highlightColor: Colors.grey.withOpacity(0.2),
-        ),
-        title: const Text(
-          "Explore",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-      ),
 
       body: _pages[_selectedIndex],
 
