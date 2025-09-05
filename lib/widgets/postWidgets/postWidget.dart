@@ -34,6 +34,28 @@ class Post {
     required this.repostNumber,
     required this.shareNumber,
   });
+
+  factory Post.fromJson(Map<String, dynamic> json) {
+    return Post(
+      username: json['username'] ,
+      subname: 'Suggested for you',
+      images:
+          (json['images'] as List<dynamic>?)
+              ?.map((img) => img.toString())
+              .toList() ??
+          [],
+      caption: json['caption'],
+      date: json['date']?.toString() ?? '',
+      isFollow: json['is_follow'] ?? false,
+      isLiked: json['is_liked'] ?? false,
+      isSaved: json['is_saved'] ?? false,
+      likesNumber: json['likes_number'] ?? 0,
+      commentNumber: json['comments_number'] ?? 0,
+      repostNumber: json['reposts_number'] ?? 0,
+      shareNumber: json['shares_number'] ?? 0,
+    );
+  }
+
 }
 
 class PostWidget extends StatefulWidget {

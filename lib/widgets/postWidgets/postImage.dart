@@ -30,7 +30,7 @@ class _PostImageState extends State<PostImage> {
               });
             },
             itemBuilder: (context, index) {
-              return Image.asset(
+              return Image.network(
                 widget.images[index],
                 fit: BoxFit.cover,
                 width: double.infinity,

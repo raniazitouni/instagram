@@ -2,52 +2,25 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:instagram/widgets/postWidgets/postWidget.dart';
-
-
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SearchSreen extends StatelessWidget {
-  final List<Post> posts = [
-    Post(
-       username: "aacoding_tips",
-       subname: "Suggested for you",
-       images: [
-        "assets/images/insta.jpg",
-        "assets/images/insta.jpg",
-        "assets/images/insta.jpg",
-        "assets/images/insta.jpg",
-      ],
-       caption: "Beautiful VS Code themes all programmers should know",
-       date: "18 August",
-       isFollow: false,
-       isLiked: false,
-       isSaved : false,
-       likesNumber :  1405,
-       commentNumber :  15,
-       repostNumber : 14,
-       shareNumber : 514,
-    ),
-    Post(
-      username: "aacoding_tips",
-      subname: "Suggested for you",
-      images: [
-        "assets/images/insta.jpg",
-        "assets/images/insta.jpg",
-        "assets/images/insta.jpg",
-        "assets/images/insta.jpg",
-      ],
-      caption: "Beautiful VS Code themes all programmers should know",
-      date: "18 August",
-      isFollow: true,
-      isLiked: false,
-       isSaved : false,
-       likesNumber :  1405,
-       commentNumber :  15,
-       repostNumber : 14,
-       shareNumber : 514,
-      
-    ),
-    
-  ];
+  // Get a reference your Supabase client
+  final supabase = Supabase.instance.client;
+
+  Future<List<Post>> fetchPosts() async {
+    try {
+      final response = await supabase.from('post').select('*, user(username)');
+      final posts = (response as List<dynamic>).map((row) {
+        return Post.fromJson({...row, 'username': row['user']['username']});
+      }).toList();
+
+      return posts;
+    } catch (e, st) {
+      debugPrint('Error fetching posts: $e\n$st');
+      throw Exception('Failed to fetch posts: $e');
+    }
+  }
 
   SearchSreen({super.key});
 
@@ -66,12 +39,25 @@ class SearchSreen extends StatelessWidget {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
-      body: ListView.builder(
-        itemCount: posts.length,
-        itemBuilder: (context, index) {
-          final post = posts[index];
-          return PostWidget( post: post,
-          );
+      body: FutureBuilder<List<Post>>(
+        future: fetchPosts(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text("Error: ${snapshot.error}"));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text("No posts yet"));
+          } else {
+            final posts = snapshot.data ?? [];
+            return ListView.builder(
+              itemCount: posts.length,
+              itemBuilder: (context, index) {
+                final post = posts[index];
+                return PostWidget(post: post);
+              },
+            );
+          }
         },
       ),
     );
