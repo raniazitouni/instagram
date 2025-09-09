@@ -7,6 +7,7 @@ import 'postImage.dart';
 import 'postFooter.dart';
 
 class Post {
+  final int id;
   final String username;
   final String subname;
   final List<String> images;
@@ -21,6 +22,7 @@ class Post {
   final int shareNumber;
 
   const Post({
+    required this.id,
     required this.username,
     required this.subname,
     required this.images,
@@ -37,6 +39,7 @@ class Post {
 
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
+      id:json['id'],
       username: json['username'] ,
       subname: 'Suggested for you',
       images:
@@ -86,6 +89,8 @@ class _PostWidgetState extends State<PostWidget> {
           likesNumber: widget.post.likesNumber,
           shareNumber: widget.post.shareNumber,
           repostNumber: widget.post.repostNumber,
+          postId: widget.post.id,
+          currentUserId: 1,
         ),
         PostFooter(
           username: widget.post.username,

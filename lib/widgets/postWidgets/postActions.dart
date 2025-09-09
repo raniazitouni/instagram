@@ -1,6 +1,8 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'postComment.dart';
+
 
 class PostActions extends StatefulWidget {
   final String username;
@@ -10,6 +12,8 @@ class PostActions extends StatefulWidget {
   final int commentNumber;
   final int repostNumber;
   final int shareNumber;
+  final int postId;
+  final int currentUserId;
 
   const PostActions({
     super.key,
@@ -20,145 +24,65 @@ class PostActions extends StatefulWidget {
     required this.likesNumber,
     required this.repostNumber,
     required this.shareNumber,
+    required this.postId,
+    required this.currentUserId,
+    
   });
 
   @override
   State<PostActions> createState() => _PostActionsState();
+
+
 }
 
 class _PostActionsState extends State<PostActions> {
-  late bool isLiked = false;
-  late bool isSaved = false;
-  late int likesNumber = 1405;
-  late int commentNumber = 15;
-  late int repostNumber = 14;
-  late int shareNumber = 514;
+  late bool isLiked;
+  late bool isSaved;
+  late int likesNumber;
+  late int commentNumber;
+  late int repostNumber;
+  late int shareNumber;
 
   @override
   void initState() {
     super.initState();
     isLiked = widget.isLiked;
     isSaved = widget.isSaved;
-    commentNumber=widget.commentNumber;
-    repostNumber=widget.repostNumber;
-    shareNumber=widget.shareNumber;
-    likesNumber=widget.likesNumber;
+    commentNumber = widget.commentNumber;
+    repostNumber = widget.repostNumber;
+    shareNumber = widget.shareNumber;
+    likesNumber = widget.likesNumber;
   }
 
-  // comments
-  final List<Map<String, dynamic>> comments = [
-    {"username": "xk345", "comment": "Nice post!"},
-    {"username": "xiaoqi", "comment": "Love this"},
-  ];
+
+  // // comments
+  // final List<Comment> comments = [
+  //   Comment(
+  //     username: "xk345",
+  //     comment: "Nice post!",
+  //     date: "1w",
+  //     CommentlikesNumber: 1,
+  //     isCommentLiked: false,
+  //   ),
+  //   Comment(
+  //     username: "xiaoqi",
+  //     comment: "Love this",
+  //     date: "2w",
+  //     CommentlikesNumber: 2,
+  //     isCommentLiked: false,
+  //   ),
+  // ];
 
   void _openComments(BuildContext context) {
-    TextEditingController _controller = TextEditingController();
-
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.grey[900],
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
-        return DraggableScrollableSheet(
-          expand: false,
-          initialChildSize: 0.6,
-          minChildSize: 0.4,
-          maxChildSize: 0.95,
-          builder: (context, scrollController) {
-            return StatefulBuilder(
-              builder: (context, setModalState) {
-                return Padding(
-                  padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).viewInsets.bottom,
-                  ),
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      children: [
-                        // drag handle
-                        Container(
-                          width: 50,
-                          height: 5,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[700],
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-
-                        // comments list
-                        Expanded(
-                          child: ListView.builder(
-                            controller: scrollController,
-                            itemCount: comments.length,
-                            itemBuilder: (context, index) {
-                              return ListTile(
-                                leading: const CircleAvatar(
-                                  backgroundColor: Colors.grey,
-                                  child: Icon(
-                                    Icons.person,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                title: Text(
-                                  comments[index]["username"],
-                                  style: const TextStyle(color: Colors.white),
-                                ),
-                                subtitle: Text(
-                                  comments[index]["comment"],
-                                  style: const TextStyle(color: Colors.white70),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-
-                        Divider(color: Colors.grey[800]),
-
-                        // input + send
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                controller: _controller,
-                                style: const TextStyle(color: Colors.white),
-                                decoration: const InputDecoration(
-                                  hintText: "Write a comment...",
-                                  hintStyle: TextStyle(color: Colors.white54),
-                                  border: InputBorder.none,
-                                ),
-                              ),
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                if (_controller.text.trim().isNotEmpty) {
-                                  setModalState(() {
-                                    comments.add({
-                                      "username": widget.username,
-                                      "comment": _controller.text.trim(),
-                                    });
-                                  });
-                                  setState(() {
-                                    commentNumber++;
-                                  });
-                                  _controller.clear();
-                                }
-                              },
-                              icon: const Icon(Icons.send, color: Colors.blue),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            );
-          },
-        );
+        return PostComment(postId : widget.postId,currentUserId: widget.currentUserId);
       },
     );
   }
